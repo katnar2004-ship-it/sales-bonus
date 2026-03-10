@@ -32,7 +32,6 @@ function calculateBonusByProfit(index, total, seller) {
     const bonus = profit * bonusPercentage;
     return bonus;
 }
-
 /**
  * Функция для анализа данных продаж
  * @param data
