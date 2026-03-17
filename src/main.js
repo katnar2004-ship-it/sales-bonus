@@ -8,7 +8,7 @@ function calculateSimpleRevenue(purchase, _product) {
     const { discount, sale_price, quantity } = purchase;
     const { purchase_price } = _product;
     const priceWithDiscount = sale_price * (1 - (discount / 100));
-    const revenue = (priceWithDiscount - purchase_price) * quantity;
+    const revenue = priceWithDiscount * quantity;
     return revenue;
 }
 /**
@@ -45,6 +45,8 @@ function analyzeSalesData(data, options) {
     || data.sellers.length === 0
     || !Array.isArray(data.products)
     || !Array.isArray(data.purchase_records)
+    || data.products.length === 0
+    || data.purchase_records.length === 0
     ) {
         throw new Error('Некорректные входные данные');
     }
