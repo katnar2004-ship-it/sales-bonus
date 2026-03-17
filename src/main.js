@@ -105,27 +105,24 @@ function analyzeSalesData(data, options) {
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
     const result = sortedSellers.map(seller => {
-        const topProducts = Object.entries(seller.products_sold)
-            .map(([sku, data]) => ({
-                sku,
-                quantity: data.quantity,
-            }))
-            .sort((a, b) => {
-                if (b.quantity !== a.quantity) {
-                    return b.quantity - a.quantity;
-                }
-                return a.sku.localeCompare(b.sku);
-            })
-            .slice(0, 10);
-        return {
-            seller_id: seller.seller_id,
-            name: seller.name,
-            revenue: Math.round(seller.revenue * 100) / 100,
-            profit: Math.round(seller.profit * 100) / 100,
-            sales_count: seller.sales_count,
-            top_products: topProducts,
-            bonus: seller.bonus
-        };
-    });
+    const topProducts = Object.entries(seller.products_sold)
+        .map(([sku, data]) => ({
+            sku,
+            quantity: data.quantity
+        }))
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 3); // топ-3 товара (если нужно)
+
+    return {
+        seller_id: seller.seller_id,
+        name: seller.name,
+        sales_count: seller.sales_count,
+        profit: Math.round(seller.profit * 100) / 100,
+        revenue: Math.round(seller.revenue * 100) / 100,
+        bonus: seller.bonus || 0,
+        top_products: topProducts
+    };
+});
+
     return result;
 }
