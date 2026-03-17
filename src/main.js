@@ -60,7 +60,7 @@ function analyzeSalesData(data, options) {
         sales_count: 0,
         profit: 0,
         revenue: 0,
-        products: {}
+        products_sold: {}
     }));
     // @TODO: Индексация продавцов и товаров для быстрого доступа
     const sellerIndex = {};
@@ -83,14 +83,14 @@ function analyzeSalesData(data, options) {
             sellerStat.revenue += revenue;
             sellerStat.profit += revenue;
             const productKey = `${product.name} (${product.category})`;
-            if (!sellerStat.products[productKey]) {
-                sellerStat.products[productKey] = {
+            if (!sellerStat.products_sold[productKey]) {
+                sellerStat.products_sold[productKey] = {
                     quantity: 0,
                     revenue: 0
                 };
             }
-            sellerStat.products[productKey].quantity += item.quantity;
-            sellerStat.products[productKey].revenue += revenue;
+            sellerStat.products_sold[productKey].quantity += item.quantity;
+            sellerStat.products_sold[productKey].revenue += revenue;
         });
     });
     // @TODO: Сортировка продавцов по прибыли
@@ -103,7 +103,7 @@ function analyzeSalesData(data, options) {
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
     const result = sortedSellers.map(seller => {
-        const topProducts = Object.entries(seller.products)
+        const topProducts = Object.entries(seller.products_sold)
             .map(([name, data]) => ({
                 name,
                 quantity: data.quantity,
