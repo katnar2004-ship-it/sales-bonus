@@ -91,13 +91,6 @@ function analyzeSalesData(data, options) {
             const revenue = calculateRevenue(item, product);
             sellerStat.revenue += revenue;
             const cost = product.purchase_price * item.quantity;
-            const revenue = calculateRevenue(item, product);
-            sellerStat.revenue += revenue;
-            
-            // СЕБЕСТОИМОСТЬ - проверяем, что purchase_price существует
-            const cost = product.purchase_price * item.quantity;
-            
-            // ПРИБЫЛЬ = выручка - себестоимость
             const profit = revenue - cost;
             sellerStat.profit += profit;
             if (!sellerStat.products_sold[item.sku]) {
