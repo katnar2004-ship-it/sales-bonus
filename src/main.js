@@ -20,6 +20,7 @@ function calculateSimpleRevenue(purchase, _product) {
  */
 function calculateBonusByProfit(index, total, seller) {
     const { profit } = seller;
+    let bonusPercentage;
     if (index === 0) {
         bonusPercentage = 0.15;
     } else if (index === 1 || index === 2) {
@@ -52,7 +53,10 @@ function analyzeSalesData(data, options) {
     }
     const { calculateRevenue, calculateBonus } = options;
     // @TODO: Проверка наличия опций
-    if (!options || typeof options !== "object" || typeof options.calculateRevenue !== "function") {
+    if (!options || typeof options !== "object") {
+        throw new Error('Чего-то не хватает');
+    }
+    if (typeof options.calculateRevenue !== "function") {
         throw new Error('Чего-то не хватает');
     }
     // @TODO: Подготовка промежуточных данных для сбора статистики
@@ -83,7 +87,8 @@ function analyzeSalesData(data, options) {
             if (!product) return;
             const revenue = calculateRevenue(item, product);
             sellerStat.revenue += revenue;
-            sellerStat.profit += revenue;
+            const cost = product.purchase_price * item.quantity;
+            sellerStat.profit += revenue - cost;
             const productKey = `${product.name} (${product.category})`;
             if (!sellerStat.products_sold[productKey]) {
                 sellerStat.products_sold[productKey] = {
@@ -106,10 +111,9 @@ function analyzeSalesData(data, options) {
     // @TODO: Подготовка итоговой коллекции с нужными полями
     const result = sortedSellers.map(seller => {
         const topProducts = Object.entries(seller.products_sold)
-            .map(([name, data]) => ({
-                name,
+            .map(([sku, data]) => ({
+                sku,
                 quantity: data.quantity,
-                revenue: Math.round(data.revenue * 100) / 100
             }))
             .sort((a, b) => b.revenue - a.revenue)
             .slice(0, 10);
