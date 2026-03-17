@@ -52,7 +52,7 @@ function analyzeSalesData(data, options) {
     }
     const { calculateRevenue, calculateBonus } = options;
     // @TODO: Проверка наличия опций
-    if (!options || typeof options !== "object" || typeof calculateRevenue !== "function") {
+    if (!options || typeof options !== "object" || typeof options.calculateRevenue !== "function") {
         throw new Error('Чего-то не хватает');
     }
     // @TODO: Подготовка промежуточных данных для сбора статистики
