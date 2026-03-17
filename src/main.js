@@ -59,6 +59,9 @@ function analyzeSalesData(data, options) {
     if (typeof options.calculateRevenue !== "function") {
         throw new Error('Чего-то не хватает');
     }
+    if (typeof options.calculateBonus !== "function") {
+        throw new Error('Чего-то не хватает');
+    }
     // @TODO: Подготовка промежуточных данных для сбора статистики
     const sellerStats = data.sellers.map(seller => ({
         seller_id: seller.id,
@@ -90,14 +93,12 @@ function analyzeSalesData(data, options) {
             const cost = product.purchase_price * item.quantity;
             sellerStat.profit += revenue - cost;
             const productKey = `${product.name} (${product.category})`;
-            if (!sellerStat.products_sold[productKey]) {
-                sellerStat.products_sold[productKey] = {
+            if (!sellerStat.products_sold[item.sku]) {
+                sellerStat.products_sold[item.sku] = {
                     quantity: 0,
-                    revenue: 0
                 };
             }
-            sellerStat.products_sold[productKey].quantity += item.quantity;
-            sellerStat.products_sold[productKey].revenue += revenue;
+            sellerStat.products_sold[item.sku].quantity += item.quantity;
         });
     });
     // @TODO: Сортировка продавцов по прибыли
@@ -105,7 +106,7 @@ function analyzeSalesData(data, options) {
     // @TODO: Назначение премий на основе ранжирования
     sortedSellers.forEach((seller, index) => {
         if (typeof calculateBonus === 'function') {
-            seller.bonus = calculateBonus(index, sortedSellers.length, seller);
+            seller.bonus = calculateBonus(index, sortedSellers.length,  { profit: seller.profit });
         }
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
@@ -115,7 +116,12 @@ function analyzeSalesData(data, options) {
                 sku,
                 quantity: data.quantity,
             }))
-            .sort((a, b) => b.revenue - a.revenue)
+            .sort((a, b) => {
+                if (b.quantity !== a.quantity) {
+                    return b.quantity - a.quantity;
+                }
+                return a.sku.localeCompare(b.sku);
+            })
             .slice(0, 10);
         return {
             seller_id: seller.seller_id,
