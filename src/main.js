@@ -111,7 +111,7 @@ function analyzeSalesData(data, options) {
             quantity: data.quantity
         }))
         .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 3); // топ-3 товара (если нужно)
+        .slice(0, 10); // топ-3 товара (если нужно)
 
     return {
         seller_id: seller.seller_id,
