@@ -101,7 +101,7 @@ function analyzeSalesData(data, options) {
     // @TODO: Назначение премий на основе ранжирования
     sortedSellers.forEach((seller, index) => {
         if (typeof calculateBonus === 'function') {
-            seller.bonus = calculateBonus(index, sortedSellers.length,  seller);
+            seller.bonus = calculateBonus(index, sortedSellers.length,  { profit: seller.profit });
         }
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
