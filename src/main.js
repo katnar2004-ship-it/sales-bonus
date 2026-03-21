@@ -6,7 +6,6 @@
  */
 function calculateSimpleRevenue(purchase, _product) {
     const { discount, sale_price, quantity } = purchase;
-    const { purchase_price } = _product;
     const priceWithDiscount = sale_price * (1 - (discount / 100));
     const revenue = priceWithDiscount * quantity;
     return Math.round(revenue * 100) / 100;
@@ -89,7 +88,8 @@ function analyzeSalesData(data, options) {
             sellerStat.profit = Math.round(sellerStat.profit * 100) / 100;
             sellerStat.profit += profit;
             if (!sellerStat.products_sold[item.sku]) {
-                sellerStat.products_sold[item.sku] = 0
+                sellerStat.products_sold[item.sku] = {
+                    quantity = 0
             }
             sellerStat.products_sold[item.sku].quantity += item.quantity;
         });
@@ -119,8 +119,8 @@ function analyzeSalesData(data, options) {
         return {
             seller_id: seller.seller_id,
             name: seller.name,
-            revenue: Math.round(seller.revenue * 100) / 100,
-            profit: Math.round(seller.profit * 100) / 100,
+            revenue: seller.revenue,
+            profit: seller.profit,
             sales_count: seller.sales_count,
             top_products: topProducts,
             bonus: seller.bonus
