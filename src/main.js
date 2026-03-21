@@ -89,9 +89,7 @@ function analyzeSalesData(data, options) {
             sellerStat.profit = Math.round(sellerStat.profit * 100) / 100;
             sellerStat.profit += profit;
             if (!sellerStat.products_sold[item.sku]) {
-                sellerStat.products_sold[item.sku] = {
-                    quantity: 0,
-                };
+                sellerStat.products_sold[item.sku] = 0
             }
             sellerStat.products_sold[item.sku].quantity += item.quantity;
         });
@@ -111,7 +109,12 @@ function analyzeSalesData(data, options) {
                 sku,
                 quantity,
             }))
-            .sort((a, b) => b.quantity - a.quantity)
+            .sort((a, b) => {
+                if (b.quantity !== a.quantity) {
+                    return b.quantity - a.quantity;
+                }
+                return a.sku.localeCompare(b.sku, 'en', { numeric: true });
+            })
             .slice(0, 10);
         return {
             seller_id: seller.seller_id,
