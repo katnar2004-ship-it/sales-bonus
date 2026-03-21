@@ -26,7 +26,7 @@ function calculateBonusByProfit(index, total, seller) {
     } else if (index === 1 || index === 2) {
         bonusPercentage = 0.10;
     } else if (index === total - 1) {
-        return 0;
+        bonusPercentage = 0;
     } else {
         bonusPercentage = 0.05;
     }
@@ -101,22 +101,17 @@ function analyzeSalesData(data, options) {
     // @TODO: Назначение премий на основе ранжирования
     sortedSellers.forEach((seller, index) => {
         if (typeof calculateBonus === 'function') {
-            seller.bonus = calculateBonus(index, sortedSellers.length,  { profit: seller.profit });
+            seller.bonus = calculateBonus(index, sortedSellers.length,  seller);
         }
     });
     // @TODO: Подготовка итоговой коллекции с нужными полями
     const result = sortedSellers.map(seller => {
         const topProducts = Object.entries(seller.products_sold)
-            .map(([sku, data]) => ({
+            .map(([sku, quantity]) => ({
                 sku,
-                quantity: data.quantity,
+                quantity,
             }))
-            .sort((a, b) => {
-                if (b.quantity !== a.quantity) {
-                    return b.quantity - a.quantity;
-                }
-                return a.sku.localeCompare(b.sku, 'en', { numeric: true });
-            })
+            .sort((a, b) => b.quantity - a.quantity)
             .slice(0, 10);
         return {
             seller_id: seller.seller_id,
