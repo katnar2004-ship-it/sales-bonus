@@ -9,7 +9,7 @@ function calculateSimpleRevenue(purchase, _product) {
     const { purchase_price } = _product;
     const priceWithDiscount = sale_price * (1 - (discount / 100));
     const revenue = priceWithDiscount * quantity;
-    return revenue;
+    return Math.round(revenue * 100) / 100;
 }
 /**
  * Функция для расчета бонусов
@@ -86,6 +86,7 @@ function analyzeSalesData(data, options) {
             sellerStat.revenue += revenue;
             const cost = product.purchase_price * item.quantity;
             const profit = revenue - cost;
+            sellerStat.profit = Math.round(sellerStat.profit * 100) / 100;
             sellerStat.profit += profit;
             if (!sellerStat.products_sold[item.sku]) {
                 sellerStat.products_sold[item.sku] = {
@@ -114,7 +115,7 @@ function analyzeSalesData(data, options) {
                 if (b.quantity !== a.quantity) {
                     return b.quantity - a.quantity;
                 }
-                return a.sku.localeCompare(b.sku);
+                return a.sku.localeCompare(b.sku, 'en', { numeric: true });
             })
             .slice(0, 10);
         return {
